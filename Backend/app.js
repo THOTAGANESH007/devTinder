@@ -1,16 +1,19 @@
 const express = require("express");
+const adminAuth = require("./middlewares/auth");
 const app = express();
 const PORT = 7777;
-app.get("/", (req, res) => {
-  res.send("From the server");
-});
 
-app.get("/hello", (req, res) => {
+//Order of the routes matter the most
+app.use("/hello", adminAuth, (req, res) => {
   res.send("Hello from the server");
 });
 
-app.get("/test", (req, res) => {
+app.use("/test", (req, res) => {
   res.send("Test from the server");
+});
+
+app.use("/", (req, res) => {
+  res.send("From the server");
 });
 
 app.listen(PORT, () => {
