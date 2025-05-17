@@ -7,6 +7,12 @@ export const registerUser = async (req, res) => {
       message: "Please fill all the fields",
     });
   }
+  alreadyExists = await UserModel.findOne({ email });
+  if (alreadyExists) {
+    return res.status(400).json({
+      message: "User already exists",
+    });
+  }
   try {
     const user = await UserModel.create({
       firstName,
