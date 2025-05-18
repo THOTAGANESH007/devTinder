@@ -94,3 +94,62 @@ export const deleteUser = async (req, res) => {
     });
   }
 };
+
+export const updateUser = async (req, res) => {
+  const userId = req.params?.userId;
+  const isUserExist = await UserModel.findById(userId);
+  if (!isUserExist) {
+    return res.status(404).json({
+      message: "User not found",
+    });
+  }
+  const data = req.body;
+  try {
+    const ALLOWED_UPDATES = [
+      "firstName",
+      "lastName",
+      "age",
+      "skills",
+      "gender",
+      "photoUrl",
+      "about",
+    ];
+    const updateFields = Object.keys(data);
+    const invalidFields = updateFields.filter(
+      (field) => !ALLOWED_UPDATES.includes(field)
+    );
+
+    if (invalidFields.length > 0) {
+      return res.status(400).json({
+        message: "Invalid fields provided",
+        invalidFields: invalidFields,
+      });
+    }
+
+    if (
+      "skills" in data &&
+      Array.isArray(data.skills) &&
+      data.skills.length > 10
+    ) {
+      return res.status(400).json({
+        message: "Skills should be less than 10",
+      });
+    }
+    const updates = {};
+    isValidUpdates.forEach((update) => {
+      updates[update] = req.body[update];
+    });
+    const user = await UserModel.findByIdAndUpdate(userId, updates, {
+      new: true,
+    });
+    return res.status(200).json({
+      message: "User updated successfully",
+      data: user,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
