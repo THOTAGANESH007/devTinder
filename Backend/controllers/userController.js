@@ -79,21 +79,9 @@ export const loginUser = async (req, res) => {
 };
 
 export const viewProfile = async (req, res) => {
-  const getCookie = req.cookies.token;
-  console.log(getCookie);
-  if (!getCookie) {
-    return res.status(401).json({
-      message: "Unauthorized",
-    });
-  }
   try {
-    const decodedCookie = jwt.verify(getCookie, process.env.JWT_SECRET);
-    const user = await UserModel.findById(decodedCookie.userId);
-    if (!user) {
-      return res.status(404).json({
-        message: "User not found",
-      });
-    }
+    const user = req.user;
+    //console.log(user);
     return res.status(200).json({
       message: "User found",
       data: user,
