@@ -1,8 +1,16 @@
 import UserModel from "../models/user.js";
-
+import { validateSignUp } from "../utils/validator.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 export const registerUser = async (req, res) => {
+  try {
+    validateSignUp(req);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+
   const { firstName, lastName, email, password, age } = req.body;
-  if (!firstName || !lastName || !email || !password || !age) {
+  if (!firstName || !email || !password) {
     return res.status(400).json({
       message: "Please fill all the fields",
     });
@@ -13,12 +21,14 @@ export const registerUser = async (req, res) => {
       message: "User already exists",
     });
   }
+
+  const passwordHash = await bcrypt.hash(password, 10);
   try {
     const user = await UserModel.create({
       firstName,
       lastName,
       email,
-      password,
+      password: passwordHash,
       age,
     });
     return res.status(201).json({
@@ -26,10 +36,75 @@ export const registerUser = async (req, res) => {
       data: user,
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
 
+export const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({
+      message: "Please fill all the fields",
+    });
+  }
+  try {
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    //console.log(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        message: "Credentials are invalid",
+      });
+    }
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+    res.cookie("token", token);
+    return res.status(200).json({
+      message: "User logged in successfully",
+      data: user,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+export const viewProfile = async (req, res) => {
+  const getCookie = req.cookies.token;
+  console.log(getCookie);
+  if (!getCookie) {
+    return res.status(401).json({
+      message: "Unauthorized",
+    });
+  }
+  try {
+    const decodedCookie = jwt.verify(getCookie, process.env.JWT_SECRET);
+    const user = await UserModel.findById(decodedCookie.userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+    return res.status(200).json({
+      message: "User found",
+      data: user,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
 export const getOneUser = async (req, res) => {
   const { email } = req.body;
   if (!email) {

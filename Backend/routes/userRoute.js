@@ -3,12 +3,16 @@ import {
   deleteUser,
   getAllUsers,
   getOneUser,
+  loginUser,
   registerUser,
   updateUser,
+  viewProfile,
 } from "../controllers/userController.js";
 const userRoute = express.Router();
 
 userRoute.post("/register", registerUser);
+userRoute.post("/login", loginUser);
+userRoute.get("/profile", viewProfile);
 userRoute.get("/getUser", getOneUser);
 userRoute.get("/feed", getAllUsers);
 userRoute.delete("/delete", deleteUser);
