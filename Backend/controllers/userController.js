@@ -55,16 +55,14 @@ export const loginUser = async (req, res) => {
         message: "User not found",
       });
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await user.validatePassword(password);
     //console.log(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({
         message: "Credentials are invalid",
       });
     }
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
+    const token = await user.getJWT();
     res.cookie("token", token, {
       expires: new Date(Date.now() + 3600 * 10 * 1000),
     });
