@@ -65,7 +65,9 @@ export const loginUser = async (req, res) => {
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
-    res.cookie("token", token);
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + 3600 * 10 * 1000),
+    });
     return res.status(200).json({
       message: "User logged in successfully",
       data: user,
@@ -92,6 +94,15 @@ export const viewProfile = async (req, res) => {
       message: error.message,
     });
   }
+};
+
+export const sendConnection = async (req, res) => {
+  const user = req.user;
+  //console.log("Sending connection request");
+  res.status(200).json({
+    message: "Connection request sent",
+    data: user,
+  });
 };
 export const getOneUser = async (req, res) => {
   const { email } = req.body;

@@ -5,6 +5,7 @@ import {
   getOneUser,
   loginUser,
   registerUser,
+  sendConnection,
   updateUser,
   viewProfile,
 } from "../controllers/userController.js";
@@ -18,4 +19,5 @@ userRoute.get("/getUser", getOneUser);
 userRoute.get("/feed", getAllUsers);
 userRoute.delete("/delete", deleteUser);
 userRoute.patch("/update/:userId", updateUser);
+userRoute.post("/sendConnectionRequest", userAuth, sendConnection);
 export default userRoute;
