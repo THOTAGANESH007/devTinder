@@ -1,9 +1,10 @@
 import express from "express";
-import adminAuth from "./middlewares/auth.js";
 import connectDB from "./config/dbConnect.js";
 import dotenv from "dotenv";
 import userRoute from "./routes/userRoute.js";
 import cookieParser from "cookie-parser";
+import profileRoute from "./routes/profileRoute.js";
+import requestRoute from "./routes/requestRoute.js";
 dotenv.config();
 
 const app = express();
@@ -52,7 +53,8 @@ app.use(cookieParser());
 // );
 
 app.use("/user", userRoute);
-
+app.use("/profile", profileRoute);
+app.use("/request", requestRoute);
 connectDB()
   .then(() => {
     app.listen(PORT, () => {

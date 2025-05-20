@@ -77,71 +77,16 @@ export const loginUser = async (req, res) => {
     });
   }
 };
-
-export const viewProfile = async (req, res) => {
+export const logoutUser = async (req, res) => {
   try {
-    const user = req.user;
-    //console.log(user);
+    res.clearCookie("token");
     return res.status(200).json({
-      message: "User found",
-      data: user,
+      message: "User logged out successfully",
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       message: error.message,
-    });
-  }
-};
-
-export const sendConnection = async (req, res) => {
-  const user = req.user;
-  //console.log("Sending connection request");
-  res.status(200).json({
-    message: "Connection request sent",
-    data: user,
-  });
-};
-export const getOneUser = async (req, res) => {
-  const { email } = req.body;
-  if (!email) {
-    return res.status(400).json({
-      message: "Please provide an email",
-    });
-  }
-  try {
-    const user = await UserModel.findOne({ email });
-    if (!user) {
-      return res.status(404).json({
-        message: "User not found",
-      });
-    }
-    return res.status(200).json({
-      message: "User found",
-      data: user,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Internal server error",
-    });
-  }
-};
-
-export const getAllUsers = async (req, res) => {
-  try {
-    const users = await UserModel.find();
-    if (!users) {
-      return res.status(404).json({
-        message: "No users found",
-      });
-    }
-    return res.status(200).json({
-      message: "Users found",
-      data: users,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Internal server error",
     });
   }
 };
