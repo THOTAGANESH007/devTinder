@@ -94,3 +94,61 @@ export const reviewConnection = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getConnectionRequests = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    console.log(userId);
+    // Find all connection requests received by the user
+    const connectionRequests = await ConnectionRequestModel.find({
+      toUserId: userId,
+      status: "interested",
+    }).populate(
+      "fromUserId",
+      "firstName lastName skills photoUrl age gender about"
+    );
+    const data = connectionRequests.map((request) => {
+      if (request.fromUserId) {
+        return request.fromUserId;
+      }
+      return null;
+    });
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Error in getConnectionRequests:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getAcceptedConnectionRequests = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    console.log(userId);
+    // Find all connection requests sent by the user
+    const sentConnectionRequests = await ConnectionRequestModel.find({
+      $or: [{ fromUserId: userId }, { toUserId: userId }],
+      status: "accepted",
+    })
+      .populate(
+        "toUserId",
+        "firstName lastName skills photoUrl age gender about"
+      )
+      .populate(
+        "fromUserId",
+        "firstName lastName skills photoUrl age gender about"
+      );
+    const data = sentConnectionRequests.map((request) => {
+      if (request.fromUserId && request.toUserId) {
+        return {
+          fromUser: request.fromUserId,
+          toUser: request.toUserId,
+        };
+      }
+      return null;
+    });
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Error in getSentConnectionRequests:", error);
+    res.status(500).json({ message: error.message });
+  }
+};

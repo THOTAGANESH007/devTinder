@@ -1,12 +1,11 @@
 import UserModel from "../models/user.js";
 import { validateSignUp } from "../utils/validator.js";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 export const registerUser = async (req, res) => {
   try {
     validateSignUp(req);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    return res.status(400).json({ message: error.message });
   }
 
   const { firstName, lastName, email, password, age } = req.body;
@@ -153,7 +152,7 @@ export const updateUser = async (req, res) => {
       });
     }
     const updates = {};
-    isValidUpdates.forEach((update) => {
+    ALLOWED_UPDATES.forEach((update) => {
       updates[update] = req.body[update];
     });
     const user = await UserModel.findByIdAndUpdate(userId, updates, {
