@@ -6,7 +6,6 @@ import {
   reviewConnection,
   sendConnection,
 } from "../controllers/requestController.js";
-import { get } from "mongoose";
 const requestRoute = express.Router();
 requestRoute.post("/send/:status/:toUserId", userAuth, sendConnection);
 requestRoute.post("/review/:status/:requestId", userAuth, reviewConnection);
