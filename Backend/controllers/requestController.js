@@ -44,7 +44,7 @@ export const sendConnection = async (req, res) => {
 
     res.status(201).json({
       message: "Connection request sent successfully.",
-      connectionRequest,
+      data: connectionRequest,
     });
   } catch (error) {
     console.error("Error in sendConnection:", error);
@@ -87,7 +87,7 @@ export const reviewConnection = async (req, res) => {
 
     res.status(200).json({
       message: `Connection request ${status} successfully.`,
-      connectionRequest,
+      data: connectionRequest,
     });
   } catch (error) {
     console.error("Error in reviewConnection:", error);
@@ -113,7 +113,10 @@ export const getConnectionRequests = async (req, res) => {
       }
       return null;
     });
-    res.status(200).json(data);
+    res.status(200).json({
+      data: data,
+      message: "Connection requests fetched successfully.",
+    });
   } catch (error) {
     console.error("Error in getConnectionRequests:", error);
     res.status(500).json({ message: error.message });
@@ -146,7 +149,10 @@ export const getAcceptedConnectionRequests = async (req, res) => {
       }
       return null;
     });
-    res.status(200).json(data);
+    res.status(200).json({
+      data: data,
+      message: "Accepted connection requests fetched successfully.",
+    });
   } catch (error) {
     console.error("Error in getSentConnectionRequests:", error);
     res.status(500).json({ message: error.message });

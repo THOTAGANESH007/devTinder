@@ -45,6 +45,7 @@ export const editProfile = async (req, res) => {
     });
   }
 };
+
 export const updatePassword = async (req, res) => {
   try {
     validatePassword(req);
@@ -115,4 +116,3 @@ export const getFeed = async (req, res) => {
     });
   }
 };
-// const user = req.user;

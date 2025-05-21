@@ -76,40 +76,6 @@ export const loginUser = async (req, res) => {
     });
   }
 };
-export const logoutUser = async (req, res) => {
-  try {
-    res.clearCookie("token");
-    return res.status(200).json({
-      message: "User logged out successfully",
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      message: error.message,
-    });
-  }
-};
-
-export const deleteUser = async (req, res) => {
-  const userId = req.body.userId;
-  //console.log(userId);
-  try {
-    const user = await UserModel.findByIdAndDelete({ _id: userId });
-    //console.log(user);
-    if (!user) {
-      return res.status(404).json({
-        message: "User not found",
-      });
-    }
-    return res.status(200).json({
-      message: "User deleted successfully",
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Internal server error",
-    });
-  }
-};
 
 export const updateUser = async (req, res) => {
   const userId = req.params?.userId;
@@ -166,6 +132,20 @@ export const updateUser = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       message: "Internal server error",
+    });
+  }
+};
+
+export const logoutUser = async (req, res) => {
+  try {
+    res.clearCookie("token");
+    return res.status(200).json({
+      message: "User logged out successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: error.message,
     });
   }
 };
